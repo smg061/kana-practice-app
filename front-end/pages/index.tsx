@@ -3,25 +3,46 @@ import Head from "next/head";
 import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import QuizCard from "../components/QuizCard";
+import { useEffect, useState } from "react";
+import { mockData } from "./mockData";
+type ScoreReport = {
+  answeredQuestions: number;
+  totalQuestions: number;
+  correctAnswers: number;
+};
 
 const Home: NextPage = () => {
-  const onAnswer = (args: any[]) => {
-    console.log(args);
+  const [score, setScore] = useState<ScoreReport>({
+    answeredQuestions: 0,
+    correctAnswers: 0,
+    totalQuestions: mockData.length,
+  });
+
+  const [data, setData] = useState<
+    { displayValue: string; correctAnswer: string }[]
+  >([]);
+
+  useEffect(() => setData(mockData), []);
+
+  const onAnswer = (answeredCorrectly: boolean) => {
+    if (answeredCorrectly) {
+      setScore((prevState) => {
+        return {
+          ...prevState,
+          correctAnswers: prevState.correctAnswers + 1,
+          answeredQuestions: prevState.answeredQuestions + 1,
+        };
+      });
+    } else {
+      setScore((prevState) => {
+        return {
+          ...prevState,
+          answeredQuestions: prevState.answeredQuestions + 1,
+        };
+      });
+    }
   };
-  const mockData = [
-    {
-      displayValue: "ひ",
-      correctAnswer: "hi",
-    },
-    { 
-      displayValue: "は",
-     correctAnswer: "ha" 
-    },
-    { 
-      displayValue: "ふ",
-     correctAnswer: "fu" 
-    },
-  ];
+
   return (
     <div className={styles.container}>
       <Head>
@@ -34,13 +55,21 @@ const Home: NextPage = () => {
         <h1 className={styles.title}></h1>
 
         <p className={styles.description}>
-          Get started by editing{" "}
-          <code className={styles.code}>pages/index.tsx</code>
+          Test your kana knowledge!
+          {score.answeredQuestions === score.totalQuestions && (
+            <div className={styles.code}>
+              Your score is{" "}
+              {parseFloat(
+                (score.correctAnswers / score.totalQuestions).toFixed(3)
+              ) * 100}
+              %
+            </div>
+          )}
         </p>
 
         <div className={styles.grid}>
-          {mockData.map((data)=> {
-            return <QuizCard onAnswer={onAnswer} {...data}/>
+          {data.map((data, i) => {
+            return <QuizCard key={i} onAnswer={onAnswer} {...data} />;
           })}
         </div>
       </main>
@@ -51,10 +80,7 @@ const Home: NextPage = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{" "}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
+          Powered by <span className={styles.logo}></span>
         </a>
       </footer>
     </div>

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Box, Textarea, Text, Stack } from "@chakra-ui/react";
-
+import styles from "../styles/QuizCard.module.css";
 interface Props {
   displayValue: string;
   correctAnswer: string;
-  onAnswer: (args: any) => void;
+  onAnswer: (answeeredCorrectly: boolean) => void;
 }
 
 type QuizCardStatus = "unanswered" | "correctAnswer" | "incorrectAnswer";
@@ -30,6 +30,9 @@ const QuizCard = ({ displayValue, correctAnswer, onAnswer }: Props) => {
       margin={2}
       bg={cardColor}
       borderRadius={"15px"}
+      className={
+        quizCardStatus === "incorrectAnswer" ? styles.wrongAnswerAnimation : ""
+      }
     >
       <Stack
         align={{ base: "center", md: "stretch" }}
@@ -53,14 +56,16 @@ const QuizCard = ({ displayValue, correctAnswer, onAnswer }: Props) => {
           bg="white"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              if (answer === correctAnswer) {
+              if(!answer) return;
+              if (answer.toLocaleLowerCase() === correctAnswer) {
                 setQuizCardStatus("correctAnswer");
                 setCardColor("green.300");
+                onAnswer(true);
               } else {
                 setQuizCardStatus("incorrectAnswer");
                 setCardColor("tomato");
+                onAnswer(false);
               }
-              onAnswer(answer);
               setAlreadyAnswered(true);
             }
           }}
