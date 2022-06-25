@@ -2,12 +2,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 type Data = {
-  name: string
+  representation: string,
+  kana: string,
 }
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<Data[]>
 ) {
-  res.status(200).json({ name: 'John Doe' })
+  const data: Data[] = await fetch('localhost:8000/kana', {
+    method: 'GET'
+  }).then(res => res.json())
+  res.status(200).json(data)
 }

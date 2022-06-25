@@ -1,10 +1,10 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import QuizCard from "../components/QuizCard";
 import { useEffect, useState } from "react";
 import { mockData } from "./mockData";
+
 type ScoreReport = {
   answeredQuestions: number;
   totalQuestions: number;
@@ -21,6 +21,15 @@ const Home: NextPage = () => {
   const [data, setData] = useState<
     { displayValue: string; correctAnswer: string }[]
   >([]);
+
+  useEffect(()=> {
+    const fetchData = async()=> {
+      const fetchData = await fetch('http://localhost:8000/kana')
+      const data = await fetchData.json();
+      console.log(data);
+    }
+    fetchData();
+  },[])
 
   useEffect(() => setData(mockData), []);
 
