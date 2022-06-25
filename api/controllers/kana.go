@@ -1,26 +1,19 @@
 package controllers
-
-
 import (
-
 	"github.com/labstack/echo/v4"
+	"github.com/smg061/kana-practice-app/api/models"
 	"net/http"
-
+)
+const  (
+	Katakana = "katakana"
+	Hiragana = "hiragana"
+	Kanji = "kanji"
 )
 
-type Kana struct {
-	Representation string `json:"representation"`
-	Romaji string `json:"romaji"`
-
-}
-
 func GetKana(c echo.Context) (err error) {
-	
-	kana := []Kana{
-		{"ひ", "hi"},
-		{"は", "hi"},
+	kana := []models.Kana{
+		{Representation: "ひ", Romaji: "hi", Classification: Hiragana},
+		{Representation: "は", Romaji: "ha", Classification: Hiragana},
 	}
-
 	return c.JSON(http.StatusOK, kana)
-	
 }
