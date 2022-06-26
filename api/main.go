@@ -1,13 +1,21 @@
 package main
 
 import (
+	"log"
 	"net/http"
+	"os"
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/smg061/kana-practice-app/api/controllers"
 )
 
 func main() {
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		log.Fatal(err)
+	}
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
@@ -22,6 +30,5 @@ func main() {
 	})
 
 	e.GET("/kana", controllers.GetKana)
-
-	e.Logger.Fatal(e.Start(":8000"))
+	e.Logger.Fatal(e.Start(os.Getenv("PORT")))
 }

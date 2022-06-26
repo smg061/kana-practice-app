@@ -2,7 +2,10 @@ module github.com/smg061/kana-practice-app/api
 
 go 1.18
 
-require github.com/labstack/echo/v4 v4.7.2
+require (
+	github.com/joho/godotenv v1.4.0
+	github.com/labstack/echo/v4 v4.7.2
+)
 
 require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
