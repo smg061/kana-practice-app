@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +11,10 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/smg061/kana-practice-app/api/controllers"
 )
+
+type app struct {
+	db *sql.DB
+}
 
 func main() {
 	err := loadSettings()
@@ -39,8 +44,7 @@ func main() {
 	e.Logger.Fatal(e.Start(os.Getenv("PORT")))
 }
 
-func loadSettings () error{
-
+func loadSettings () error {
 	err := godotenv.Load(".env")
 	if err != nil {
 		return err

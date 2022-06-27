@@ -3,7 +3,6 @@ package controllers
 import (
 	"fmt"
 	"net/http"
-
 	"github.com/labstack/echo/v4"
 	"github.com/smg061/kana-practice-app/api/data"
 	"github.com/smg061/kana-practice-app/api/models"

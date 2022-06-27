@@ -22,7 +22,7 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - postgresdb
+      - pg
     networks:
       - learning
     
