@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -11,14 +12,18 @@ import (
 )
 
 func main() {
-	err := godotenv.Load(".env")
-
+	err := loadSettings()
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	e := echo.New()
-	e.Use(middleware.Logger())
+	e.Logger.SetLevel(0)
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
 	e.Use(middleware.Recover())
+	
 
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins: []string{"*"},
@@ -30,5 +35,15 @@ func main() {
 	})
 
 	e.GET("/kana", controllers.GetKana)
+	e.GET("/test", controllers.GetStuff)
 	e.Logger.Fatal(e.Start(os.Getenv("PORT")))
+}
+
+func loadSettings () error{
+
+	err := godotenv.Load(".env")
+	if err != nil {
+		return err
+	}
+	return nil
 }
