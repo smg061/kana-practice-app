@@ -1,17 +1,7 @@
 package models
 
-type Classification string
+type Classification int
 
-func (c Classification) IsValid() bool {
-
-	switch c {
-	case "Katakana", "Hiragana", "Kanji":
-		return true
-	default:
-		return false
-	}
-
-}
 
 type Kana struct {
 	Representation string         `json:"representation"`

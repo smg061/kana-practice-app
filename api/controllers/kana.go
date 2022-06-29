@@ -8,9 +8,9 @@ import (
 	"github.com/smg061/kana-practice-app/api/models"
 )
 const  (
-	Katakana = "katakana"
-	Hiragana = "hiragana"
-	Kanji = "kanji"
+	Hiragana = iota
+	Katakana 
+	Kanji
 )
 
 func GetKana(c echo.Context) (err error) {
