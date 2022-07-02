@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net/http"
 	"os"
@@ -10,10 +9,12 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/smg061/kana-practice-app/api/controllers"
+	"github.com/smg061/kana-practice-app/api/models"
 )
 
 type app struct {
-	db *sql.DB
+	KanaModel *models.KanaModel
+	echoCtx *echo.Echo
 }
 
 func main() {
@@ -38,10 +39,20 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello, World!\n")
 	})
-
-	e.GET("/kana", controllers.GetKana)
-	e.GET("/test", controllers.GetStuff)
+	e.GET("/kana", controllers.GetAllKana)
 	e.Logger.Fatal(e.Start(os.Getenv("PORT")))
+
+	// db, err := data.GetDB()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// app := app {
+	// 	KanaModel: &models.KanaModel{
+	// 		DB: db,
+	// 	},
+	// 	echoCtx: e,
+	// }
+	
 }
 
 func loadSettings () error {

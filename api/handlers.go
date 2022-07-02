@@ -1,11 +1,9 @@
-package controllers
-
+package main
 import (
 	"fmt"
 	"net/http"
 	"github.com/labstack/echo/v4"
 	"github.com/smg061/kana-practice-app/api/data"
-	"github.com/smg061/kana-practice-app/api/models"
 )
 const  (
 	Hiragana = iota
@@ -13,7 +11,7 @@ const  (
 	Kanji
 )
 
-func GetAllKana(c echo.Context) (err error) {
+func (app *app)GetAllKana(c echo.Context) (err error) {
 
 	db,err := data.GetDB()
 
@@ -31,16 +29,9 @@ func GetAllKana(c echo.Context) (err error) {
 	}
 	defer rows.Close()
 
- 	kanaResult := []models.Kana{}
-	for rows.Next() {
-		var kana models.Kana
-		err = rows.Scan(&kana.Representation, &kana.Romaji, &kana.Classification, &kana.Initial)
-		if err != nil {
-			c.Logger().Error(err)
-			return c.JSON(http.StatusInternalServerError, err)
-		}
-		kanaResult = append(kanaResult, kana)
-		fmt.Printf("%v\n", kana)
+ 	kanaResult,err := app.KanaModel.GetAllKana()
+	if err != nil {
+		c.Logger().Error(err)
 	}
 	return c.JSON(http.StatusOK, kanaResult)
 }
