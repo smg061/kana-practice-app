@@ -4,13 +4,13 @@ import (
 	"database/sql"
 )
 
-type Classification int
+
 
 
 type Kana struct {
 	Representation string         `json:"representation"`
 	Romaji         string         `json:"romaji"`
-	Classification Classification `json:"classification"`
+	Classification int `json:"classification"`
 	Initial 	   string 		  `json:"initial"`
 }
 
@@ -38,7 +38,8 @@ func (km *KanaModel) GetAllKana() ([]Kana, error) {
 
 }
 	
-func (km *KanaModel) GetKanaByClass(classification string) ([]Kana, error) {
+func (km *KanaModel) GetByClass(classification int) ([]Kana, error) {
+	
 	statement := "SELECT representation, romaji, classification, initial FROM kana WHERE classification = $1"
 	rows, err := km.DB.Query(statement, classification)
 
@@ -53,9 +54,9 @@ func (km *KanaModel) GetKanaByClass(classification string) ([]Kana, error) {
 
 }
 
-func (km *KanaModel) GetKanagetKanaByInitial (initial string) ([]Kana, error) {
+func (km *KanaModel) GetByInitial (initial string) ([]Kana, error) {
 	statement := "SELECT representation, romaji, classification, initial FROM kana WHERE initial = $1"
-	rows, err := km.DB.Query(statement)
+	rows, err := km.DB.Query(statement, initial)
 	if err != nil {
 		return nil, err
 	}

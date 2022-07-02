@@ -1,9 +1,19 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 )
 
-func (a* app) routes() *echo.Echo {
-	return nil
+func (app *app) routes() *echo.Echo {
+	e := echo.New()
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, World!\n")
+	})
+	e.GET("/kana", app.GetAllKana)
+	e.POST("/kanaByClass", app.GetKanaByClass)
+	e.POST("/kanaByInitial", app.GetKanaByInitial)
+	return e
+
 }
