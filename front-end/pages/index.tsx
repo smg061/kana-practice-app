@@ -12,10 +12,6 @@ type ScoreReport = {
 };
 
 
-
-  
-
-
 const Home: NextPage = () => {
   const [score, setScore] = useState<ScoreReport>({
     answeredQuestions: 0,
@@ -37,9 +33,6 @@ const Home: NextPage = () => {
   },[])
 
   useEffect(() => setData(mockData), []);
-
-
-
 
   const onAnswer = (answeredCorrectly: boolean) => {
     if (answeredCorrectly) {
