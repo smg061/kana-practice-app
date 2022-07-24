@@ -5,21 +5,40 @@ import (
 )
 
 
-
-
+// this is the db entity
 type Kana struct {
-	Representation string         `json:"representation"`
-	Romaji         string         `json:"romaji"`
-	Classification int `json:"classification"`
-	Initial 	   string 		  `json:"initial"`
+	Representation string         
+	Romaji         string         
+	Classification int 
+	Initial 	   string 		  
 }
 
+type KanaJsonView struct {
+	DisplayValue string         `json:"displayValue"`
+	CorrectAnswer string        `json:"correctAnswer"`
+	Classification string 		`json:"classification"`
+	Initial 	   string 		`json:"initial"`
+}
+
+func (kn Kana) ToJsonView() (view *KanaJsonView) {
+	jsonView  :=&KanaJsonView{
+		DisplayValue: kn.Representation,
+		CorrectAnswer: kn.Romaji,
+		Initial: kn.Initial,
+	}
+	if kn.Classification == 1 {
+		jsonView.Classification = "hiragana"
+	} else {
+		jsonView.Classification = "katakana"
+	}
+	return jsonView
+}
 
 type KanaModel struct {
 	DB *sql.DB
 }
 
-func (km *KanaModel) GetAllKana() ([]Kana, error) {
+func (km *KanaModel) GetAllKana() ([]KanaJsonView, error) {
 
 	statement := "SELECT representation, romaji, classification, initial FROM kana"
 	rows, err := km.DB.Query(statement)
@@ -34,11 +53,16 @@ func (km *KanaModel) GetAllKana() ([]Kana, error) {
 	if err != nil {
 		return nil, err
 	}
-	return kanaResult, nil
+	var kanaJsonViews []KanaJsonView
+
+	for _, k := range kanaResult {
+		kanaJsonViews = append(kanaJsonViews, *k.ToJsonView())
+	}
+	return kanaJsonViews, nil
 
 }
 	
-func (km *KanaModel) GetByClass(classification int) ([]Kana, error) {
+func (km *KanaModel) GetByClass(classification float64) ([]KanaJsonView, error) {
 	
 	statement := "SELECT representation, romaji, classification, initial FROM kana WHERE classification = $1"
 	rows, err := km.DB.Query(statement, classification)
@@ -47,14 +71,20 @@ func (km *KanaModel) GetByClass(classification int) ([]Kana, error) {
 		return nil, err
 	}
 	kanaResult, err := km.parseKanaRows(rows)
+	var kanaJsonViews []KanaJsonView
+
+	for _, k := range kanaResult {
+		kanaJsonViews = append(kanaJsonViews, *k.ToJsonView())
+	}
 	if err != nil {
 		return nil, err
 	}
-	return kanaResult, nil
+	
+	return kanaJsonViews, nil
 
 }
 
-func (km *KanaModel) GetByInitial (initial string) ([]Kana, error) {
+func (km *KanaModel) GetByInitial (initial string) ([]KanaJsonView, error) {
 	statement := "SELECT representation, romaji, classification, initial FROM kana WHERE initial = $1"
 	rows, err := km.DB.Query(statement, initial)
 	if err != nil {
@@ -64,7 +94,12 @@ func (km *KanaModel) GetByInitial (initial string) ([]Kana, error) {
 	if err != nil {
 		return nil, err
 	}
-	return kanaResult, nil
+	var kanaJsonViews []KanaJsonView
+
+	for _, k := range kanaResult {
+		kanaJsonViews = append(kanaJsonViews, *k.ToJsonView())
+	}
+	return kanaJsonViews, nil
 }
 
 func (km *KanaModel) parseKanaRows(input *sql.Rows) ([]Kana, error) {

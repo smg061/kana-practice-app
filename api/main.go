@@ -21,17 +21,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// e := echo.New()
-
-
-	// e.GET("/", func(c echo.Context) error {
-	// 	return c.String(http.StatusOK, "Hello, World!\n")
-	// })
-	// e.GET("/kana", controllers.GetAllKana)
 	
-	//e.Logger.Fatal(e.Start(os.Getenv("PORT")))
-
 	db, err := data.GetDB()
 	if err != nil {
 		log.Fatal(err)

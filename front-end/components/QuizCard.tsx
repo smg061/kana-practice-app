@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, Textarea, Text, Stack } from "@chakra-ui/react";
 import styles from "../styles/QuizCard.module.css";
+import Draggable from "react-draggable";
 interface Props {
   displayValue: string;
   correctAnswer: string;
@@ -10,6 +11,7 @@ interface Props {
 type QuizCardStatus = "unanswered" | "correctAnswer" | "incorrectAnswer";
 
 type FeedBackColor = "tomato" | "green.300" | "blue.300";
+
 const QuizCard = ({ displayValue, correctAnswer, onAnswer }: Props) => {
   const [answer, setAnswer] = useState<string>("");
   const [quizCardStatus, setQuizCardStatus] =
@@ -22,58 +24,62 @@ const QuizCard = ({ displayValue, correctAnswer, onAnswer }: Props) => {
     setAnswer(value);
   };
   return (
-    <Box
-      p={4}
-      display={{ md: "flex" }}
-      maxWidth="32rem"
-      borderWidth={1}
-      margin={2}
-      bg={cardColor}
-      borderRadius={"15px"}
-      className={
-        quizCardStatus === "incorrectAnswer" ? styles.wrongAnswerAnimation : ""
-      }
-    >
-      <Stack
-        align={{ base: "center", md: "stretch" }}
-        textAlign={{ base: "center", md: "left" }}
-        mt={{ base: 4, md: 0 }}
-        ml={{ md: 6 }}
+    <Draggable>
+      <Box
+        p={4}
+        display={{ md: "flex" }}
+        maxWidth="32rem"
+        borderWidth={1}
+        margin={2}
+        bg={cardColor}
+        borderRadius={"15px"}
+        className={
+          quizCardStatus === "incorrectAnswer"
+            ? styles.wrongAnswerAnimation
+            : ""
+        }
       >
-        <Text
-          fontWeight="bold"
-          textTransform="uppercase"
-          fontSize="6xl"
-          letterSpacing="wide"
-          color="black"
+        <Stack
+          align={{ base: "center", md: "stretch" }}
+          textAlign={{ base: "center", md: "left" }}
+          mt={{ base: 4, md: 0 }}
+          ml={{ md: 6 }}
         >
-          {displayValue}
-        </Text>
-        <Textarea
-          value={answer}
-          onChange={(e) => handleAnswer(e.target.value)}
-          disabled={alreadyAnswered}
-          bg="white"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              if(!answer) return;
-              if (answer.toLocaleLowerCase() === correctAnswer) {
-                setQuizCardStatus("correctAnswer");
-                setCardColor("green.300");
-                onAnswer(true);
-              } else {
-                setQuizCardStatus("incorrectAnswer");
-                setCardColor("tomato");
-                onAnswer(false);
+          <Text
+            fontWeight="bold"
+            textTransform="uppercase"
+            fontSize="6xl"
+            letterSpacing="wide"
+            color="black"
+          >
+            {displayValue}
+          </Text>
+          <Textarea
+            value={answer}
+            onChange={(e) => handleAnswer(e.target.value)}
+            disabled={alreadyAnswered}
+            bg="white"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                if (!answer) return;
+                if (answer.toLocaleLowerCase() === correctAnswer) {
+                  setQuizCardStatus("correctAnswer");
+                  setCardColor("green.300");
+                  onAnswer(true);
+                } else {
+                  setQuizCardStatus("incorrectAnswer");
+                  setCardColor("tomato");
+                  onAnswer(false);
+                }
+                setAlreadyAnswered(true);
               }
-              setAlreadyAnswered(true);
-            }
-          }}
-          placeholder="Enter your answer"
-          resize="none"
-        ></Textarea>
-      </Stack>
-    </Box>
+            }}
+            placeholder="Enter your answer"
+            resize="none"
+          ></Textarea>
+        </Stack>
+      </Box>
+    </Draggable>
   );
 };
 

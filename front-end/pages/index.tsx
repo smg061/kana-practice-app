@@ -2,8 +2,8 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 import QuizCard from "../components/QuizCard";
-import { useEffect, useState } from "react";
-import { mockData } from "./mockData";
+import { useState } from "react";
+import {shuffleArray } from "./mockData";
 
 type ScoreReport = {
   answeredQuestions: number;
@@ -11,28 +11,18 @@ type ScoreReport = {
   correctAnswers: number;
 };
 
-
-const Home: NextPage = () => {
+type Kana = {
+  displayValue: string; correctAnswer: string
+}
+type HomePageProps = {
+  data: Kana[] 
+}
+const Home: NextPage<HomePageProps> = (props: HomePageProps) => {
   const [score, setScore] = useState<ScoreReport>({
     answeredQuestions: 0,
     correctAnswers: 0,
-    totalQuestions: mockData.length,
+    totalQuestions: props.data.length,
   });
-
-  const [data, setData] = useState<
-    { displayValue: string; correctAnswer: string }[]
-  >([]);
-
-  useEffect(()=> {
-    const fetchData = async()=> {
-      const fetchData = await fetch('http://localhost:8000/kana')
-      const data = await fetchData.json();
-      console.log(data);
-    }
-    fetchData();
-  },[])
-
-  useEffect(() => setData(mockData), []);
 
   const onAnswer = (answeredCorrectly: boolean) => {
     if (answeredCorrectly) {
@@ -78,7 +68,7 @@ const Home: NextPage = () => {
         </p>
 
         <div className={styles.grid}>
-          {data.map((data, i) => {
+          {props.data.map((data, i) => {
             return <QuizCard key={i} onAnswer={onAnswer} {...data} />;
           })}
         </div>
@@ -90,11 +80,17 @@ const Home: NextPage = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by <span className={styles.logo}></span>
+          <span className={styles.logo}></span>
         </a>
       </footer>
     </div>
   );
 };
+
+export async function getServerSideProps() {
+  const res = await fetch("http://localhost:8000/kana");
+  const data:  Kana[] = await res.json();
+  return { props: { data: shuffleArray(data) } };
+}
 
 export default Home;

@@ -14,6 +14,8 @@ func (app *app) routes() *echo.Echo {
 	e.GET("/kana", app.GetAllKana)
 	e.POST("/kanaByClass", app.GetKanaByClass)
 	e.POST("/kanaByInitial", app.GetKanaByInitial)
+	e.GET("/kana/:initial", app.GetKanaByInitialQuery)
+	e.GET("/kana/byclass/:class", app.GetKanaByClassQuery)
 	return e
 
 }

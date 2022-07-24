@@ -12,9 +12,7 @@ const  (
 	Katakana 
 	Kanji
 )
-type filter interface {
-	int | float64 | ~string
-}
+
 type KanaRequest map[string]interface{}
 
 func (app *app) GetAllKana(c echo.Context) (err error) {
@@ -33,9 +31,8 @@ func (app *app) GetKanaByClass(c echo.Context) (err error) {
 		return c.JSON(http.StatusBadRequest, err)
 	}
 
-	// json numbers that come from req are float64 values so we need to cast
-	// interface as float64 and then to int
-	filter := int(req["filter"].(float64))
+	// json numbers that come from req are float64 values 
+	filter := req["filter"].(float64)
 
 	if err != nil {
 		// c.Logger().Error("Error")
@@ -56,7 +53,6 @@ func (app *app) GetKanaByInitial (c echo.Context) (err error) {
 	}
 
 	filter, ok := req["filter"].(string)
-
 	if !ok {
 		return c.JSON(http.StatusBadRequest, "filter must be a string or something castable as a string")
 	}
@@ -70,6 +66,37 @@ func (app *app) GetKanaByInitial (c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, kana)
 }
 
+func (app *app) GetKanaByInitialQuery(c echo.Context) (err error) {
+	initial := c.Param("initial")
+	kana, err := app.KanaModel.GetByInitial(initial)
+	if err != nil {
+		c.Logger().Error(err)
+		return c.JSON(http.StatusInternalServerError, "Something went wrong when getting results")
+	}
+	if len(kana) == 0 {
+		return c.JSON(http.StatusNotFound, fmt.Sprintf("Could not find data with '%s' as the initial", initial))
+	}
+	return c.JSON(http.StatusOK, kana)
+}
+func (app *app) GetKanaByClassQuery(c echo.Context) (err error) {
+	class := c.Param("type")
+
+	if class == "" {
+		return c.JSON(http.StatusBadRequest, fmt.Sprintf("Please provide a valid parameter"))
+	}
+	var kanaType float64
+	
+	if class == "hiragana" {
+		kanaType = 0
+	} else {
+		kanaType = 1.0
+	}
+	kana, err := app.KanaModel.GetByClass(kanaType)
+	if err != nil {
+		return c.JSON(http.StatusAccepted, fmt.Sprintf("Something went wrong: %v", err))
+	}
+	return c.JSON(http.StatusOK, kana)
+}
 
 func InsertKanaRecords (c echo.Context) (err error) {
 
@@ -95,5 +122,4 @@ func InsertKanaRecords (c echo.Context) (err error) {
 		}
 	}
 	return c.JSON(http.StatusAccepted, fmt.Sprintf("inserted %d rows into kana table", len(insertRows)))
-
 }
