@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Textarea, Text, Stack } from "@chakra-ui/react";
 import styles from "../styles/QuizCard.module.css";
-import Draggable from "react-draggable";
 interface Props {
   displayValue: string;
   correctAnswer: string;
@@ -9,7 +8,6 @@ interface Props {
 }
 
 type QuizCardStatus = "unanswered" | "correctAnswer" | "incorrectAnswer";
-
 type FeedBackColor = "tomato" | "green.300" | "blue.300";
 
 const QuizCard = ({ displayValue, correctAnswer, onAnswer }: Props) => {
@@ -23,8 +21,13 @@ const QuizCard = ({ displayValue, correctAnswer, onAnswer }: Props) => {
     if (value === "\n") return;
     setAnswer(value);
   };
+
+  useEffect(()=> {
+    setCardColor('blue.300');
+    setQuizCardStatus('unanswered');
+    setAlreadyAnswered(false);
+  },[displayValue,correctAnswer])
   return (
-    <Draggable>
       <Box
         p={4}
         display={{ md: "flex" }}
@@ -79,7 +82,6 @@ const QuizCard = ({ displayValue, correctAnswer, onAnswer }: Props) => {
           ></Textarea>
         </Stack>
       </Box>
-    </Draggable>
   );
 };
 

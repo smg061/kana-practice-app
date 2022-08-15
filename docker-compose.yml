@@ -1,5 +1,20 @@
 version: "3.9"
 services:
+  frontend:
+        container_name: front-end
+        build: './front-end'
+        command: npm run start
+        ports:
+            - "3000:3000"        
+        volumes: 
+            - ./:/client
+            - /client/node_modules
+        links:
+          - app
+        environment:
+          - API_BASE_URL=host.docker.internal
+        networks:
+          - learning
   app:
     container_name: golang_container
     environment:
@@ -10,8 +25,6 @@ services:
       # - DATABASE_PORT=${DB_PORT}
       - POSTGRES_HOST_AUTH_METHOD=trust
       - ENV=production
-
-
     tty: true
     build: ./api/
     env_file:
