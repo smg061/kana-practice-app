@@ -1,12 +1,11 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import styles from "../styles/Home.module.css";
-import QuizCard from "../components/QuizCard";
+import styles from "../../styles/Home.module.css";
 import { useMemo, useState } from "react";
-import { shuffleArray } from "../utils/utils";
-import { Kana } from "../models/models";
-import { PriorityQueue, Node } from "../utils/priorityQueue";
-import Ankicard from "../components/Ankicard";
+import { shuffleArray } from "../../utils/utils";
+import { Kana } from "../../models/models";
+import { PriorityQueue, Node } from "../../utils/priorityQueue";
+import Ankicard from "../../components/Ankicard";
 
 type ScoreReport = {
   answeredQuestions: number;
@@ -32,24 +31,11 @@ const Home: NextPage<HomePageProps> = (props: HomePageProps) => {
 
   const [currentKana, setCurrentKana] = useState<Kana[]>(props.data);
   const queue = useMemo(() => new PriorityQueue<Kana>(props.data), [props.data]);
+  const [currentNode, setCurrentNode] = useState(queue.dequeue());
 
-  const onAnswer = (answeredCorrectly: boolean) => {
-    if (answeredCorrectly) {
-      setScore((prevState) => {
-        return {
-          ...prevState,
-          correctAnswers: prevState.correctAnswers + 1,
-          answeredQuestions: prevState.answeredQuestions + 1,
-        };
-      });
-    } else {
-      setScore((prevState) => {
-        return {
-          ...prevState,
-          answeredQuestions: prevState.answeredQuestions + 1,
-        };
-      });
-    }
+  const onAnswer = (args: any) => {
+
+    setCurrentNode(queue.dequeue());
   };
 
   const resetScore = () => {
@@ -100,9 +86,13 @@ const Home: NextPage<HomePageProps> = (props: HomePageProps) => {
         </section>
 
         <div className={styles.grid}>
-          {currentKana.map((data, i) => {
-            return <QuizCard key={data.classification + data.displayValue} onAnswer={onAnswer} {...data} />;
-          })}
+          {currentNode && (
+            <Ankicard
+              onAnswer={onAnswer}
+              key={currentNode.value.classification + currentNode.value.correctAnswer}
+              node={currentNode}
+            ></Ankicard>
+          )}
         </div>
       </main>
 
