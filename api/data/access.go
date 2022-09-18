@@ -25,11 +25,8 @@ func GetDB() (*sql.DB, error) {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
 		"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-
+		
 	db, err := sql.Open("pgx", psqlInfo)
-
-	fmt.Println(psqlInfo)
-
 	if err != nil {
 		return nil, err
 	}

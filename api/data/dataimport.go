@@ -7,16 +7,12 @@ import (
 	"os"
 	"strconv"
 	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/smg061/kana-practice-app/api/models"
+
 )
 
-type KanaRecord struct {
-	Representation string
-	Romaji         string
-	Classification int
-	Initial 	   string
-}
 
-func ReadKanaRecords() ([]KanaRecord, error) {
+func ReadKanaRecords() ([]models.Kana, error) {
 
 	filename := "kana-data.csv"
 
@@ -40,7 +36,7 @@ func ReadKanaRecords() ([]KanaRecord, error) {
 		log.Fatal(err)
 		return nil, err
 	}
-	inserts := []KanaRecord{}
+	inserts := []models.Kana{}
 	for _, row := range reads {
 		kana, err := newKanaRecord(row)
 		if err != nil {
@@ -55,8 +51,8 @@ func ReadKanaRecords() ([]KanaRecord, error) {
 
 }
 
-func newKanaRecord(row []string) (*KanaRecord, error) {
-	var kana KanaRecord
+func newKanaRecord(row []string) (*models.Kana, error) {
+	var kana models.Kana
 	kana.Representation = row[0]
 	kana.Romaji = row[1]
 	c, err := strconv.Atoi(row[2])

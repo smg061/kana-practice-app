@@ -6,7 +6,6 @@ import { useMemo, useState } from "react";
 import { shuffleArray } from "../utils/utils";
 import { Kana } from "../models/models";
 import { PriorityQueue, Node } from "../utils/priorityQueue";
-import Ankicard from "../components/Ankicard";
 
 type ScoreReport = {
   answeredQuestions: number;
@@ -19,8 +18,7 @@ type HomePageProps = {
 };
 
 const filterKana = (initial: Kana[], key: keyof Kana, filter: string): Kana[] => {
-  const r = initial.filter((kana) => kana[key] === filter).map((kana) => ({ ...kana }));
-  return r;
+   return initial.filter((kana) => kana[key] === filter).map((kana) => ({ ...kana }));
 };
 
 const Home: NextPage<HomePageProps> = (props: HomePageProps) => {
