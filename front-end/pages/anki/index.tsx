@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import styles from "../../styles/Home.module.css";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { shuffleArray } from "../../utils/utils";
 import { Kana } from "../../models/models";
 import { PriorityQueue, Node } from "../../utils/priorityQueue";
@@ -22,19 +22,18 @@ const filterKana = (initial: Kana[], key: keyof Kana, filter: string): Kana[] =>
   return r;
 };
 
-const Home: NextPage<HomePageProps> = (props: HomePageProps) => {
+const Home: NextPage<HomePageProps> = ({data}: HomePageProps) => {
   const [score, setScore] = useState<ScoreReport>({
     answeredQuestions: 0,
     correctAnswers: 0,
-    totalQuestions: props.data.length,
+    totalQuestions: data.length,
   });
 
-  const [currentKana, setCurrentKana] = useState<Kana[]>(props.data);
-  const queue = useMemo(() => new PriorityQueue<Kana>(props.data), [props.data]);
+  const [currentKana, setCurrentKana] = useState<Kana[]>(data);
+  const queue = useMemo(() => new PriorityQueue<Kana>(currentKana), [currentKana]);
   const [currentNode, setCurrentNode] = useState(queue.dequeue());
 
   const onAnswer = (args: any) => {
-
     setCurrentNode(queue.dequeue());
   };
 
@@ -45,6 +44,10 @@ const Home: NextPage<HomePageProps> = (props: HomePageProps) => {
       totalQuestions: currentKana.length,
     });
   };
+
+  useEffect(()=> {
+    setCurrentNode(queue.dequeue())
+  }, [2queue])
 
   return (
     <div className={styles.container}>
@@ -69,7 +72,8 @@ const Home: NextPage<HomePageProps> = (props: HomePageProps) => {
           <h2>Filter by: </h2>
           <a
             onClick={() => {
-              setCurrentKana(filterKana(props.data, "classification", "hiragana"));
+              const newKana = filterKana(data, "classification", "hiragana")
+              setCurrentKana(newKana);
               resetScore();
             }}
           >
@@ -77,7 +81,8 @@ const Home: NextPage<HomePageProps> = (props: HomePageProps) => {
           </a>
           <a
             onClick={() => {
-              setCurrentKana(filterKana(props.data, "classification", "katakana"));
+              const newKana = filterKana(data, "classification", "katakana")
+              setCurrentKana(newKana);
               resetScore();
             }}
           >

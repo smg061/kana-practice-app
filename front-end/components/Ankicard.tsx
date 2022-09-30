@@ -1,32 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { Box, Textarea, Text, Stack, Button } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Box, Text, Stack, Button } from "@chakra-ui/react";
 import styles from "../styles/QuizCard.module.css";
-import { FeedBackColor, QuizCardStatus } from "./types";
 import { Kana } from "../models/models";
-import { PriorityQueue, Node } from "../utils/priorityQueue";
+import { Node } from "../utils/priorityQueue";
 interface Props {
   node: Node<Kana>;
   onAnswer: (args: any) => void;
 }
 
 const Ankicard = ({ node, onAnswer }: Props) => {
-  const [answer, setAnswer] = useState<string>("");
-  const [quizCardStatus, setQuizCardStatus] = useState<QuizCardStatus>("unanswered");
-  const [cardColor, setCardColor] = useState<FeedBackColor>("blue.300");
   const [alreadyAnswered, setAlreadyAnswered] = useState<boolean>(false);
   const { displayValue, correctAnswer } = node.value;
   return (
     <Box
       p={4}
-      alignItems="center"
-      justifyContent="center"
+      alignItems='center'
+      justifyContent='center'
       display='flex'
       maxWidth='40rem'
       borderWidth={1}
       margin={2}
-      bg={cardColor}
+      bg={"blue.300"}
       borderRadius={"15px"}
-      className={quizCardStatus === "incorrectAnswer" ? styles.wrongAnswerAnimation : ""}
+      width={"17.5vw"}
     >
       <Stack
         align={{ base: "center" }}
@@ -45,15 +41,24 @@ const Ankicard = ({ node, onAnswer }: Props) => {
           )}
         </Box>
         <Stack direction='row' align='center'>
-          <Button
-            onClick={() => {
-              setAlreadyAnswered(true);
-            }}
-            colorScheme='gray'
-            size='md'
-          >
-            Show answer
-          </Button>
+          {!alreadyAnswered && (
+            <Button
+              onClick={() => {
+                setAlreadyAnswered(true);
+              }}
+              colorScheme='gray'
+              size='md'
+            >
+              Show answer
+            </Button>
+          )}
+          {alreadyAnswered && (
+            <Stack direction='row'>
+              <Button onClick={() => onAnswer(10)}>Again</Button>
+              <Button onClick={() => onAnswer(1)}>Good</Button>
+              <Button onClick={() => onAnswer(1)}>Easy</Button>
+            </Stack>
+          )}
         </Stack>
       </Stack>
     </Box>
